@@ -1,0 +1,16 @@
+{
+  "name": "bungee_queue",
+  "version": "1.0.0",
+  "description": "2B2T Like queue server for BungeeCord.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bytearray": "^0.1.3",
+    "minecraft-protocol": "^1.9.4"
+  }
+}

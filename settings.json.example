@@ -1,0 +1,34 @@
+{
+    "host": "127.0.0.1",
+    "port": 25564,
+    "version": "1.13.2",
+    "targetServer": "main",
+    "maxPlayers": 1,
+    "text": {
+        "welcome": [
+            {
+                "text":"Welcome to Server Name !!"
+            },
+            "\n",
+            {
+                "text":"You are now queueing up, please "
+            },
+            {
+                "text":"click here",
+                "clickEvent":{
+                    "action":"open_url",
+                    "value":"http://facebook.com"
+                },
+                "hoverEvent":{
+                    "action":"show_text",
+                    "value":"Click to open feedback page"
+                }
+            },
+            {
+                "text":" to submit your feedback."
+            },
+            "\n"
+        ],
+        "queueNumber": "Your current queue number: %d"
+    }
+}
