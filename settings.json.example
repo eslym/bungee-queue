@@ -3,6 +3,7 @@
     "port": 25564,
     "version": "1.13.2",
     "targetServer": "main",
+    "maxInQueue": 2000,
     "maxPlayers": 1,
     "text": {
         "welcome": [

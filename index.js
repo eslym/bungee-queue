@@ -9,6 +9,7 @@ let server = mc.createServer({
     host: settings.host,
     port: settings.port,
     version: settings.version,
+    maxPlayers: settings.maxInQueue,
 });
 
 server.on('login', function(client){
@@ -18,7 +19,7 @@ server.on('login', function(client){
         gameMode: 3,
         dimension: 0,
         difficulty: 0,
-        maxPlayers: 1,
+        maxPlayers: server.maxPlayers,
         reducedDebugInfo: false
     });
     client.write('position', {
