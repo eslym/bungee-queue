@@ -26,3 +26,16 @@ cp settings.json.example settings.json
 pm2 start index.js --name bungee-queue
 pm2 save
 ```
+
+## Configuration
+| Path             | Type        | Description                                 |
+|------------------|-------------|---------------------------------------------|
+| host             | string (ip) | Ip which queue server listening to          |
+| port             | int         | Port number which queue server listening to |
+| version          | string      | Minecraft Version                           |
+| targetServer     | string      | Target server in bungeecord                 |
+| maxInQueue       | int         | Max player allowed in queue                 |
+| maxPlayers       | int         | Max player allowed in target server         |
+| queueChat        | boolean     | Enable chat in queue server                 |
+| text.welcome     | JSON Text   | Minecraft JSON Text for welcome message     |
+| text.queueNumber | string      | Format string to notify queue number        |
