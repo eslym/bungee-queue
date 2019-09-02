@@ -42,6 +42,9 @@ pm2 save
 | text.enteringGame | string      | Text which tells player they are entering game |
 
 ## Special Thanks
+### References
+1. [BungeeCord Wiki](https://www.spigotmc.org/wiki/bungeecord/)
+2. [node-minecraft-protocol](https://github.com/PrismarineJS/node-minecraft-protocol)
 ### Tester (Minecraft ID)
 ```MzDTin``` ```Shuang2716``` ```Oo_Kuma_oO``` ```otakuyuanji``` ```mack68426```
 ```Ikaros2333``` ```ohanndark``` ```niwadaisuke``` ```Foiluk``` ```Emerald98787```
