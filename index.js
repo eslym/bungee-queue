@@ -32,7 +32,7 @@ server.on('login', function(client){
     });
     client.write('chat', {
         message: JSON.stringify(settings.text.welcome),
-        position: 0,
+        position: 1,
     });
     client.on('custom_payload', function(data){
         if(data.channel === "bungeecord:main"){
@@ -49,7 +49,12 @@ server.on('login', function(client){
                         bytearray.writeUTF(buff, "Connect");
                         bytearray.writeUTF(buff, settings.targetServer, 9);
                         if(Object.values(server.clients).length > 0) {
-                            Object.values(server.clients)[0].write('custom_payload', {
+                            var first = Object.values(server.clients)[0];
+                            first.write('chat', {
+                                message: JSON.stringify(settings.text.enteringGame),
+                                position: 1,
+                            });
+                            first.write('custom_payload', {
                                 channel: 'bungeecord:main',
                                 data: buff,
                             });
@@ -122,12 +127,6 @@ function notifyQueue(client, number){
                 text: util.format(settings.text.queueNumber, number)
             }),
             position: 1
-        });
-        client.write('chat', {
-            message: JSON.stringify({
-                text: util.format(settings.text.queueNumber, number),
-            }),
-            position: 2,
         });
         client.write('experience', {
             experienceBar: 0,

@@ -39,3 +39,7 @@ pm2 save
 | queueChat        | boolean     | Enable chat in queue server                 |
 | text.welcome     | JSON Text   | Minecraft JSON Text for welcome message     |
 | text.queueNumber | string      | Format string to notify queue number        |
+
+## Special Thanks
+### Tester (Minecraft ID)
+MzDTin, Shuang2716, Oo_Kuma_oO, otakuyuanji, mack68426, Ikaros2333
