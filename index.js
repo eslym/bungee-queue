@@ -45,11 +45,11 @@ server.on('login', function(client){
                     offset += srv.length + 2;
                     let count = bytearray.readInt(data.data, offset);
                     if(count < settings.maxPlayers){
-                        let buff = Buffer.alloc(100);
-                        bytearray.writeUTF(buff, "Connect");
-                        bytearray.writeUTF(buff, settings.targetServer, 9);
                         if(Object.values(server.clients).length > 0) {
                             var first = Object.values(server.clients)[0];
+                            let buff = Buffer.alloc(100);
+                            bytearray.writeUTF(buff, "Connect");
+                            bytearray.writeUTF(buff, settings.targetServer, 9);
                             first.write('chat', {
                                 message: JSON.stringify(settings.text.enteringGame),
                                 position: 1,
@@ -122,6 +122,17 @@ function updateQueue(){
 
 function notifyQueue(client, number){
     if(client.state === mc.states.PLAY){
+        if (number <= settings.soundNotify.since){
+            client.write('named_sound_effect', {
+                soundName: settings.soundNotify.sound,
+                soundCategory: "master",
+                x: 0,
+                y: 1.62,
+                z: 0,
+                volume: 1,
+                pitch: 1
+            });
+        }
         client.write('chat', {
             message: JSON.stringify({
                 text: util.format(settings.text.queueNumber, number)

@@ -33,5 +33,9 @@
         ],
         "queueNumber": "§r§eYour current queue number: %d",
         "enteringGame": "§r§eYou are now entering game."
+    },
+    "soundNotify": {
+        "since": 5,
+        "sound": "entity.experience_orb.pickup"
     }
 }
