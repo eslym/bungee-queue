@@ -58,6 +58,19 @@ server.on('login', function(client){
             }
         }
     });
+    client.on('chat', function(data){
+        if(data.message === 'creeper?'){
+            client.write('chat', {
+                message: JSON.stringify([
+                    {
+                        text: "Aww Man!",
+                        color: "yellow",
+                    }
+                ]),
+                position: 0,
+            });
+        }
+    });
     client.on('end', updateQueue);
     client.on('error', updateQueue);
     notifyQueue(client, Object.values(server.clients).length);
