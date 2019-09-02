@@ -14,6 +14,7 @@ This system serve as a backend server for BungeeCord, it required BungeeCord to 
 git clone --branch stable https://github.com/eslym/bungee-queue.git
 cd bungee-queue
 npm install
+cp settings.json.example settings.json
 node index.js
 ```
 ### With PM2
@@ -21,6 +22,7 @@ node index.js
 git clone --branch stable https://github.com/eslym/bungee-queue.git
 cd bungee-queue
 npm install
+cp settings.json.example settings.json
 pm2 start index.js --name bungee-queue
 pm2 save
 ```
