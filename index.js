@@ -16,10 +16,10 @@ server.on('login', function(client){
     client.write('login', {
         entityId: client.id,
         levelType: 'default',
-        gameMode: 3,
+        gameMode: 0,
         dimension: 0,
         difficulty: 0,
-        maxPlayers: server.maxPlayers,
+        maxPlayers: settings.maxPlayers,
         reducedDebugInfo: false
     });
     client.write('position', {
@@ -60,15 +60,31 @@ server.on('login', function(client){
         }
     });
     client.on('chat', function(data){
-        if(data.message === 'creeper?'){
-            client.write('chat', {
-                message: JSON.stringify([
-                    {
-                        text: "Aww Man!",
-                        color: "yellow",
-                    }
-                ]),
-                position: 0,
+        if(settings.queueChat){
+            Object.values(server.clients).forEach((target) => {
+                target.write('chat', {
+                    message: JSON.stringify([
+                        {
+                            translate: 'chat.type.text',
+                            with: [
+                                client.username,
+                                data.message,
+                            ]
+                        }
+                    ]),
+                    position: 0,
+                });
+                if(data.message === 'creeper?'){
+                    target.write('chat', {
+                        message: JSON.stringify([
+                            {
+                                text: "Aww Man!",
+                                color: "yellow",
+                            }
+                        ]),
+                        position: 0,
+                    });
+                }
             });
         }
     });
@@ -103,9 +119,20 @@ function notifyQueue(client, number){
     if(client.state === mc.states.PLAY){
         client.write('chat', {
             message: JSON.stringify({
-                text: util.format(settings.text.queueNumber, number),
-                position: 0
-            })
+                text: util.format(settings.text.queueNumber, number)
+            }),
+            position: 1
         });
+        client.write('chat', {
+            message: JSON.stringify({
+                text: util.format(settings.text.queueNumber, number),
+            }),
+            position: 2,
+        });
+        client.write('experience', {
+            experienceBar: 0,
+            level: number,
+            totalExperience: 0,
+        })
     }
 }
