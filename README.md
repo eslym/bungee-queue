@@ -3,7 +3,7 @@ A 2B2T-Like Queue System.
 
 一个仿 2B2T 的排隊系統。
 
-## Notice
+## Prerequisite
 This system serve as a backend server for BungeeCord, it required BungeeCord to work.
 
 此系統是一個利用BungeeCord機制來實現排隊的模擬麥塊伺服器，因此需要BungeeCord才能使用。
