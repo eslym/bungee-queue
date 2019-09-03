@@ -39,20 +39,23 @@ pm2 save
    當排隊號碼接近遊玩時的聲音提示
 
 ## Configuration
-| Path              | Type        | Description                                                                                       |
-|-------------------|-------------|---------------------------------------------------------------------------------------------------|
-| host              | string (ip) | Ip which queue server listening to                                                                |
-| port              | int         | Port number which queue server listening to                                                       |
-| version           | string      | Minecraft Version                                                                                 |
-| targetServer      | string      | Target server in bungeecord                                                                       |
-| maxInQueue        | int         | Max player allowed in queue                                                                       |
-| maxPlayers        | int         | Max player allowed in target server                                                               |
-| queueChat         | boolean     | Enable chat in queue server                                                                       |
-| text.welcome      | JSON Text   | Minecraft JSON Text for welcome message                                                           |
-| text.queueNumber  | string      | Format string to notify queue number                                                              |
-| text.enteringGame | string      | Text which tells player they are entering game                                                    |
-| soundNotify.since | int         | Notify player with a sound effect on queue number changes when reach this number                  |
-| soundNotify.sound | string      | Minecraft sound effect name ([Refer Here](https://pokechu22.github.io/Burger/1.14.4.html#sounds)) |
+| Path                | Type        | Description                                                                                       |
+|---------------------|-------------|---------------------------------------------------------------------------------------------------|
+| host                | string (ip) | Ip which queue server listening to                                                                |
+| port                | int         | Port number which queue server listening to                                                       |
+| version             | string      | Minecraft Version                                                                                 |
+| targetServer        | string      | Target server in bungeecord                                                                       |
+| maxInQueue          | int         | Max player allowed in queue                                                                       |
+| maxPlayers          | int         | Max player allowed in target server                                                               |
+| queueChat.enable    | boolean     | Enable chat in queue server                                                                       |
+| queueChat.slowMode  | boolean     | Enable slow mode for chat                                                                         |
+| queueChat.slowDelay | int         | Slow mode delay                                                                                   |
+| queueChat.tooFast   | JSON Text   | Minecraft JSON Text to warn player when sending too fast                                          |
+| text.welcome        | JSON Text   | Minecraft JSON Text for welcome message                                                           |
+| text.queueNumber    | string      | Format string to notify queue number                                                              |
+| text.enteringGame   | string      | Text which tells player they are entering game                                                    |
+| soundNotify.since   | int         | Notify player with a sound effect on queue number changes when reach this number                  |
+| soundNotify.sound   | string      | Minecraft sound effect name ([Refer Here](https://pokechu22.github.io/Burger/1.14.4.html#sounds)) |
 
 ## Special Thanks
 ### References

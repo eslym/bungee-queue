@@ -5,7 +5,19 @@
     "targetServer": "main",
     "maxInQueue": 2000,
     "maxPlayers": 50,
-    "queueChat": false,
+    "queueChat": {
+        "enable": false,
+        "slowMode": true,
+        "slowDelay": {
+            "seconds": 30
+        },
+        "tooFast": [
+            {
+                "text": "You are sending chat too fast!",
+                "color": "red"
+            }
+        ]
+    },
     "text": {
         "welcome": [
             {

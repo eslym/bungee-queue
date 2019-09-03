@@ -2,6 +2,7 @@ const mc = require('minecraft-protocol');
 const settings = require('./settings.json');
 const bungee = require('./lib/bungee');
 const util = require('util');
+const moment = require('moment');
 
 let server = mc.createServer({
     'online-mode': false,
@@ -22,6 +23,9 @@ server.on('login', function (client) {
         maxPlayers: settings.maxPlayers,
         reducedDebugInfo: false
     });
+    if(settings.queueChat.slowMode){
+        client.lastChat = moment();
+    }
     client.write('position', {
         x: 0,
         y: 1.62,
@@ -59,8 +63,15 @@ server.on('login', function (client) {
             }
         }
     });
-    client.on('chat', function (data) {
-        if (settings.queueChat) {
+    if (settings.queueChat.enable) {
+        client.on('chat', function (data) {
+            if(settings.queueChat.slowMode && client.lastChat.add(settings.queueChat.slowDelay).isAfter(moment())){
+                client.write('chat', {
+                    message: JSON.stringify(settings.queueChat.tooFast),
+                    position: 1
+                });
+                return;
+            }
             Object.values(server.clients).forEach((target) => {
                 target.write('chat', {
                     message: JSON.stringify([
@@ -86,8 +97,11 @@ server.on('login', function (client) {
                     });
                 }
             });
-        }
-    });
+            if(settings.queueChat.slowMode){
+                client.lastChat = moment();
+            }
+        });
+    }
     client.on('end', updateQueue);
     client.on('error', updateQueue);
     notifyQueue(client, Object.values(server.clients).length);
