@@ -24,7 +24,7 @@ server.on('login', function (client) {
         reducedDebugInfo: false
     });
     if(settings.queueChat.slowMode){
-        client.lastChat = moment();
+        client.lastChat = moment().subtract(settings.queueChat.slowDelay);
     }
     client.write('position', {
         x: 0,
@@ -38,34 +38,25 @@ server.on('login', function (client) {
         message: JSON.stringify(settings.text.welcome),
         position: 1,
     });
-    client.registerChannel('bungeecord:main');
-    client.on('bungeecord:main', function (buffer) {
-        let data = bungee.parsePacketBuffer("bungee:response", buffer).data;
+    bungee(client);
+    client.on('bungeecord:PlayerCount', function (data) {
         if (
-            data.action === "PlayerCount" &&
             data.server === settings.targetServer &&
             data.count < settings.maxPlayers
         ) {
             if (Object.values(server.clients).length > 0) {
-                var first = Object.values(server.clients)[0];
-                let buff = bungee.createPacketBuffer("bungee:request", {
-                    action: "Connect",
-                    server: settings.targetServer
-                });
+                first = Object.values(server.clients)[0];
                 first.write('chat', {
                     message: JSON.stringify(settings.text.enteringGame),
                     position: 1,
                 });
-                first.write('custom_payload', {
-                    channel: 'bungeecord:main',
-                    data: buff,
-                });
+                bungee(first).connect(settings.targetServer);
             }
         }
     });
     if (settings.queueChat.enable) {
         client.on('chat', function (data) {
-            if(settings.queueChat.slowMode && client.lastChat.add(settings.queueChat.slowDelay).isAfter(moment())){
+            if(settings.queueChat.slowMode && client.lastChat.clone().add(settings.queueChat.slowDelay).isAfter(moment())){
                 client.write('chat', {
                     message: JSON.stringify(settings.queueChat.tooFast),
                     position: 1
@@ -111,14 +102,7 @@ setInterval(function () {
     let clients = Object.values(server.clients);
     for (let client of clients) {
         if (client.state === mc.states.PLAY) {
-            let buff = bungee.createPacketBuffer("bungee:request", {
-                action: "PlayerCount",
-                server: settings.targetServer
-            });
-            client.write('custom_payload', {
-                channel: 'bungeecord:main',
-                data: buff,
-            });
+            bungee(client).playerCount(settings.targetServer);
             break;
         }
     }
