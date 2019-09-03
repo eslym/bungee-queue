@@ -17,7 +17,7 @@ npm install
 cp settings.json.example settings.json
 node index.js
 ```
-### With PM2
+### With PM2 (Recommended)
 ```bash
 git clone --branch stable https://github.com/eslym/bungee-queue.git
 cd bungee-queue
@@ -52,3 +52,6 @@ pm2 save
 ```Ikaros2333``` ```ohanndark``` ```niwadaisuke``` ```Foiluk``` ```Emerald98787```
 ```Night_star_0u0``` ```KissMy_Ass``` ```anyabanana``` ```laki0802``` ```SideMan_is_me```
 ```shenching3615```
+
+## Alternatives
+1. [MastuQueueBungee](https://github.com/EmotionalLove/MatsuQueueBungee)

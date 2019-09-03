@@ -1,6 +1,6 @@
 const mc = require('minecraft-protocol');
 const settings = require('./settings.json');
-const bytearray = require('bytearray');
+const bungee = require('./lib/bungee');
 const util = require('util');
 
 let server = mc.createServer({
@@ -12,7 +12,7 @@ let server = mc.createServer({
     maxPlayers: settings.maxInQueue,
 });
 
-server.on('login', function(client){
+server.on('login', function (client) {
     client.write('login', {
         entityId: client.id,
         levelType: 'default',
@@ -34,38 +34,33 @@ server.on('login', function(client){
         message: JSON.stringify(settings.text.welcome),
         position: 1,
     });
-    client.on('custom_payload', function(data){
-        if(data.channel === "bungeecord:main"){
-            let offset = 0;
-            let sub = bytearray.readUTF(data.data, offset);
-            if(sub === "PlayerCount"){
-                offset += sub.length + 2;
-                let srv = bytearray.readUTF(data.data, offset);
-                if(srv === settings.targetServer){
-                    offset += srv.length + 2;
-                    let count = bytearray.readInt(data.data, offset);
-                    if(count < settings.maxPlayers){
-                        if(Object.values(server.clients).length > 0) {
-                            var first = Object.values(server.clients)[0];
-                            let buff = Buffer.alloc(100);
-                            bytearray.writeUTF(buff, "Connect");
-                            bytearray.writeUTF(buff, settings.targetServer, 9);
-                            first.write('chat', {
-                                message: JSON.stringify(settings.text.enteringGame),
-                                position: 1,
-                            });
-                            first.write('custom_payload', {
-                                channel: 'bungeecord:main',
-                                data: buff,
-                            });
-                        }
-                    }
-                }
+    client.registerChannel('bungeecord:main');
+    client.on('bungeecord:main', function (buffer) {
+        let data = bungee.parsePacketBuffer("bungee:response", buffer).data;
+        if (
+            data.action === "PlayerCount" &&
+            data.server === settings.targetServer &&
+            data.count < settings.maxPlayers
+        ) {
+            if (Object.values(server.clients).length > 0) {
+                var first = Object.values(server.clients)[0];
+                let buff = bungee.createPacketBuffer("bungee:request", {
+                    action: "Connect",
+                    server: settings.targetServer
+                });
+                first.write('chat', {
+                    message: JSON.stringify(settings.text.enteringGame),
+                    position: 1,
+                });
+                first.write('custom_payload', {
+                    channel: 'bungeecord:main',
+                    data: buff,
+                });
             }
         }
     });
-    client.on('chat', function(data){
-        if(settings.queueChat){
+    client.on('chat', function (data) {
+        if (settings.queueChat) {
             Object.values(server.clients).forEach((target) => {
                 target.write('chat', {
                     message: JSON.stringify([
@@ -79,7 +74,7 @@ server.on('login', function(client){
                     ]),
                     position: 0,
                 });
-                if(data.message === 'creeper?'){
+                if (data.message === 'creeper?') {
                     target.write('chat', {
                         message: JSON.stringify([
                             {
@@ -98,13 +93,14 @@ server.on('login', function(client){
     notifyQueue(client, Object.values(server.clients).length);
 });
 
-setInterval(function(){
+setInterval(function () {
     let clients = Object.values(server.clients);
-    for(let client of clients){
-        if(client.state === mc.states.PLAY) {
-            let buff = Buffer.alloc(100);
-            bytearray.writeUTF(buff, "PlayerCount");
-            bytearray.writeUTF(buff, settings.targetServer, 13);
+    for (let client of clients) {
+        if (client.state === mc.states.PLAY) {
+            let buff = bungee.createPacketBuffer("bungee:request", {
+                action: "PlayerCount",
+                server: settings.targetServer
+            });
             client.write('custom_payload', {
                 channel: 'bungeecord:main',
                 data: buff,
@@ -114,15 +110,15 @@ setInterval(function(){
     }
 }, 200);
 
-function updateQueue(){
-    Object.values(server.clients).forEach((client, index)=>{
+function updateQueue() {
+    Object.values(server.clients).forEach((client, index) => {
         notifyQueue(client, index + 1);
     });
 }
 
-function notifyQueue(client, number){
-    if(client.state === mc.states.PLAY){
-        if (number <= settings.soundNotify.since){
+function notifyQueue(client, number) {
+    if (client.state === mc.states.PLAY) {
+        if (number <= settings.soundNotify.since) {
             client.write('named_sound_effect', {
                 soundName: settings.soundNotify.sound,
                 soundCategory: "master",
