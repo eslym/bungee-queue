@@ -31,7 +31,7 @@
                 "text":"click here",
                 "clickEvent":{
                     "action":"open_url",
-                    "value":"http://facebook.com"
+                    "value":"https://github.com/eslym/bungee-queue/issues"
                 },
                 "hoverEvent":{
                     "action":"show_text",
