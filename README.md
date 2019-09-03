@@ -27,6 +27,17 @@ pm2 start index.js --name bungee-queue
 pm2 save
 ```
 
+## Features
+1. Queue number shown as experience level
+   
+   排隊號碼以等級的方式顯示
+2. Chat while queue (can enable/disable)
+   
+   排隊時聊天 （可開啟或禁用）
+3. Sound notification when nearly join game
+   
+   當排隊號碼接近遊玩時的聲音提示
+
 ## Configuration
 | Path              | Type        | Description                                                                                       |
 |-------------------|-------------|---------------------------------------------------------------------------------------------------|
