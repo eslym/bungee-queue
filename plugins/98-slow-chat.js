@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 module.exports = function (server, handler, settings){
     if(settings.queueChat.enable && settings.queueChat.slowMode){
         
