@@ -15,18 +15,33 @@ let server = mc.createServer({
     maxPlayers: settings.maxInQueue,
 });
 
-const handler = new Handler();
-
 const pluginPath = path.join(__dirname, 'plugins');
 for(let plugin of fs.readdirSync(pluginPath, 'utf-8')){
     if(!plugin.endsWith('.js')) continue;
-    require(path.join(pluginPath, plugin))(server, handler, settings);
+    require(path.join(pluginPath, plugin))(server, Handler, settings);
 }
 
-server.on('login', function (client) {
-    handler.bind(client);
-    client.write('login', {
-        entityId: client.id,
+Handler.on('bungeecord:PlayerCount', function (data) {
+    if (
+        data.server === settings.targetServer &&
+        data.count < settings.maxPlayers
+    ) {
+        if (Object.values(server.clients).length > 0) {
+            first = Object.values(server.clients)[0];
+            first.write('chat', {
+                message: JSON.stringify(settings.text.enteringGame),
+                position: 1,
+            });
+            bungee(first).connect(settings.targetServer);
+        }
+    }
+});
+
+Handler.on('end', updateQueue);
+Handler.on('error', updateQueue);
+Handler.onBind(function (){
+    this.client.write('login', {
+        entityId: this.client.id,
         levelType: 'default',
         gameMode: 0,
         dimension: 0,
@@ -34,7 +49,7 @@ server.on('login', function (client) {
         maxPlayers: settings.maxPlayers,
         reducedDebugInfo: false
     });
-    client.write('position', {
+    this.client.write('position', {
         x: 0,
         y: 1.62,
         z: 0,
@@ -42,30 +57,15 @@ server.on('login', function (client) {
         pitch: 0,
         flags: 0x00
     });
-    client.write('chat', {
+    this.client.write('chat', {
         message: JSON.stringify(settings.text.welcome),
         position: 1,
     });
-    bungee(client);
-    handler.on('bungeecord:PlayerCount', function (client, data) {
-        if (
-            data.server === settings.targetServer &&
-            data.count < settings.maxPlayers
-        ) {
-            if (Object.values(server.clients).length > 0) {
-                first = Object.values(server.clients)[0];
-                first.write('chat', {
-                    message: JSON.stringify(settings.text.enteringGame),
-                    position: 1,
-                });
-                bungee(first).connect(settings.targetServer);
-            }
-        }
-    });
-    handler.on('end', updateQueue);
-    handler.on('error', updateQueue);
-    notifyQueue(client, Object.values(server.clients).length);
+    bungee(this.client);
+    notifyQueue(this.client, Object.values(server.clients).length);
 });
+
+server.on('login', Handler.of);
 
 setInterval(function () {
     let clients = Object.values(server.clients);

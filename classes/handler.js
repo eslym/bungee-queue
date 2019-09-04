@@ -1,31 +1,53 @@
 const Chain = require('./chain');
 
-function Handler(){
+let globalHandlers = {};
+let bindListener = new Chain();
+
+function Handler(client){
     let handlers = {};
-    let bindListener = new Chain((a, b, next)=>{ next(a, b); });
+    let instance = this;
 
     this.on = function(event, handler){
         if(handlers.hasOwnProperty(event)){
             handlers[event].pipe(handler);
         } else {
             handlers[event] = new Chain(handler);
+            client.on(event, function(...args){
+                handlers[event].run(instance, ...args);
+            })
         }
         return this;
     };
 
-    this.onBind = function(callback){
-        bindListener.pipe(callback);
+    for(let event in globalHandlers){
+        handlers[event] = globalHandlers[event].clone();
+        client.on(event, function(...args){
+            handlers[event].run(instance, ...args);
+        })
     }
 
-    this.bind = function(client){
-        for(let event in handlers){
-            client.on(event, function(data){
-                handlers[event].run(client, data);
-            });
-        }
-        bindListener.run(client, null);
-        return this;
-    };
+    this.client = client;
+    bindListener.run(this);
+}
+
+Handler.onBind = function(handler){
+    bindListener.pipe(handler);
+}
+
+Handler.on = function(event, handler){
+    if(globalHandlers.hasOwnProperty(event)){
+        globalHandlers[event].pipe(handler);
+    } else {
+        globalHandlers[event] = new Chain(handler);
+    }
+    return Handler;
+}
+
+Handler.of = function(client){
+    if(client.hasOwnProperty('pluginHandler')){
+        return client.pluginHandler;
+    }
+    return client.pluginHandler = new Handler(client);
 }
 
 module.exports = Handler;
