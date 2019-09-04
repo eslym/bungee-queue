@@ -14,7 +14,7 @@ function Handler(){
     };
 
     this.onBind = function(callback){
-        this.bindListener.pipe(callback);
+        bindListener.pipe(callback);
     }
 
     this.bind = function(client){
@@ -23,7 +23,7 @@ function Handler(){
                 handlers[event].run(client, data);
             });
         }
-        this.bindListener.run(client, null);
+        bindListener.run(client, null);
         return this;
     };
 }

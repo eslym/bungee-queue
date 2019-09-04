@@ -17,9 +17,10 @@ let server = mc.createServer({
 
 const handler = new Handler();
 
-for(let plugin of fs.readdirSync(path.join(__dirname, 'plugins'), 'utf-8')){
+const pluginPath = path.join(__dirname, 'plugins');
+for(let plugin of fs.readdirSync(pluginPath, 'utf-8')){
     if(!plugin.endsWith('.js')) continue;
-    require(plugin)(server, handler, settings);
+    require(path.join(pluginPath, plugin))(server, handler, settings);
 }
 
 server.on('login', function (client) {
@@ -46,7 +47,7 @@ server.on('login', function (client) {
         position: 1,
     });
     bungee(client);
-    handler.on('bungeecord:PlayerCount', function (data) {
+    handler.on('bungeecord:PlayerCount', function (client, data) {
         if (
             data.server === settings.targetServer &&
             data.count < settings.maxPlayers
