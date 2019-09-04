@@ -1,6 +1,6 @@
 const mc = require('minecraft-protocol');
 const settings = require('./settings.json');
-const bungee = require('./lib/bungee');
+const bungee = require('bungeecord-message');
 const util = require('util');
 const moment = require('moment');
 
