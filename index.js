@@ -3,6 +3,9 @@ const settings = require('./settings.json');
 const bungee = require('bungeecord-message');
 const util = require('util');
 const moment = require('moment');
+const fs = require('fs');
+const path = require('path');
+const Handler = require('./classes/handler');
 
 let server = mc.createServer({
     'online-mode': false,
@@ -13,7 +16,15 @@ let server = mc.createServer({
     maxPlayers: settings.maxInQueue,
 });
 
+const handler = new Handler();
+
+for(let plugin of fs.readdirSync(path.join(__dirname, 'plugins'), 'utf-8')){
+    if(!plugin.endsWith('.js')) continue;
+    require(plugin)(server, handler, settings);
+}
+
 server.on('login', function (client) {
+    handler.bind(client);
     client.write('login', {
         entityId: client.id,
         levelType: 'default',
@@ -23,9 +34,6 @@ server.on('login', function (client) {
         maxPlayers: settings.maxPlayers,
         reducedDebugInfo: false
     });
-    if(settings.queueChat.slowMode){
-        client.lastChat = moment().subtract(settings.queueChat.slowDelay);
-    }
     client.write('position', {
         x: 0,
         y: 1.62,
@@ -39,7 +47,7 @@ server.on('login', function (client) {
         position: 1,
     });
     bungee(client);
-    client.on('bungeecord:PlayerCount', function (data) {
+    handler.on('bungeecord:PlayerCount', function (data) {
         if (
             data.server === settings.targetServer &&
             data.count < settings.maxPlayers
@@ -54,47 +62,8 @@ server.on('login', function (client) {
             }
         }
     });
-    if (settings.queueChat.enable) {
-        client.on('chat', function (data) {
-            if(settings.queueChat.slowMode && client.lastChat.clone().add(settings.queueChat.slowDelay).isAfter(moment())){
-                client.write('chat', {
-                    message: JSON.stringify(settings.queueChat.tooFast),
-                    position: 1
-                });
-                return;
-            }
-            Object.values(server.clients).forEach((target) => {
-                target.write('chat', {
-                    message: JSON.stringify([
-                        {
-                            translate: 'chat.type.text',
-                            with: [
-                                client.username,
-                                data.message,
-                            ]
-                        }
-                    ]),
-                    position: 0,
-                });
-                if (data.message === 'creeper?') {
-                    target.write('chat', {
-                        message: JSON.stringify([
-                            {
-                                text: "Aww Man!",
-                                color: "yellow",
-                            }
-                        ]),
-                        position: 0,
-                    });
-                }
-            });
-            if(settings.queueChat.slowMode){
-                client.lastChat = moment();
-            }
-        });
-    }
-    client.on('end', updateQueue);
-    client.on('error', updateQueue);
+    handler.on('end', updateQueue);
+    handler.on('error', updateQueue);
     notifyQueue(client, Object.values(server.clients).length);
 });
 
