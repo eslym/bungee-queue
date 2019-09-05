@@ -73,3 +73,8 @@ pm2 save
 
 ## Alternatives
 1. [MastuQueueBungee](https://github.com/EmotionalLove/MatsuQueueBungee)
+
+## Plugin development
+I am too lazy to write documentation for this part.
+
+我很懶，插件開發的文檔就不寫了。
