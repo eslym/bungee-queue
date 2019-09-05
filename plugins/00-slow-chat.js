@@ -7,7 +7,7 @@ module.exports = function (server, handler, settings){
             next();
         });
 
-        handler.on('chat', function(data, meta, next){
+        handler.on('chat', function(next){
             let client = this.client;
             if(client.lastChat.clone().add(settings.queueChat.slowDelay).isAfter(moment())){
                 client.write('chat', {
@@ -16,7 +16,7 @@ module.exports = function (server, handler, settings){
                 });
                 return;
             }
-            next(data, meta);
+            next();
             client.lastChat = moment();
         });
     }

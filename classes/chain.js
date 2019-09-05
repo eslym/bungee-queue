@@ -9,10 +9,10 @@ function Chain(callback = null) {
 
     this.run = function (thisArg, ...args) {
         let fns = callbacks.concat([function(){}]);
-        let run = function (...args) {
-            return fns.shift().apply(thisArg, args.concat(run));
+        let run = function () {
+            return fns.shift().apply(thisArg, [run].concat(args));
         };
-        return run.apply(null, args);
+        return run();
     };
 
     this.pipe = function (callback) {

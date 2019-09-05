@@ -1,6 +1,6 @@
 module.exports = function (server, handler, settings){
     if(settings.queueChat.enable){
-        handler.on('chat', function(data, meta, next){
+        handler.on('chat', function(next, data){
             let client = this.client;
             Object.values(server.clients).forEach((target) => {
                 target.write('chat', {
@@ -27,7 +27,7 @@ module.exports = function (server, handler, settings){
                     });
                 }
             });
-            next(data, meta);
+            next();
         });
     }
 }
