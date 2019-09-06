@@ -1,6 +1,6 @@
 {
   "name": "bungee_queue",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "2B2T Like queue server for BungeeCord.",
   "main": "index.js",
   "scripts": {
