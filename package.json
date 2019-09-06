@@ -10,7 +10,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "bungeecord-message": "^1.0.2",
+    "bungeecord-message": "^1.0.3",
     "minecraft-protocol": "^1.9.4",
     "moment": "^2.24.0",
     "protodef": "^1.6.10"
