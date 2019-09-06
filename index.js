@@ -6,6 +6,9 @@ const fs = require('fs');
 const path = require('path');
 const Handler = require('./classes/handler');
 
+let queue = {};
+let pending = {};
+
 let server = mc.createServer({
     'online-mode': false,
     encryption: true,
@@ -24,10 +27,12 @@ for(let plugin of fs.readdirSync(pluginPath, 'utf-8')){
 Handler.on('bungeecord:PlayerCount', function (next, data) {
     if (
         data.server === settings.targetServer &&
-        data.count < settings.maxPlayers
+        (data.count + Object.values(pending).length) < settings.maxPlayers
     ) {
-        if (Object.values(server.clients).length > 0) {
-            first = Object.values(server.clients)[0];
+        if (Object.values(queue).length > 0) {
+            first = Object.values(queue)[0];
+            delete queue[this.client.id];
+            pending[first.id] = this.client.id;
             first.write('chat', {
                 message: JSON.stringify(settings.text.enteringGame),
                 position: 1,
@@ -39,6 +44,7 @@ Handler.on('bungeecord:PlayerCount', function (next, data) {
 
 Handler.on('end', updateQueue);
 Handler.on('error', updateQueue);
+
 Handler.onBind(function (){
     this.client.write('login', {
         entityId: this.client.id,
@@ -61,8 +67,9 @@ Handler.onBind(function (){
         message: JSON.stringify(settings.text.welcome),
         position: 1,
     });
+    queue[this.client.id] = this.client;
     bungee(this.client);
-    notifyQueue(this.client, Object.values(server.clients).length);
+    notifyQueue(this.client, Object.values(queue).length);
 });
 
 server.on('login', Handler.of);
@@ -78,7 +85,9 @@ setInterval(function () {
 }, 200);
 
 function updateQueue() {
-    Object.values(server.clients).forEach((client, index) => {
+    delete queue[this.client.id];
+    delete pending[this.client.id];
+    Object.values(queue).forEach((client, index) => {
         notifyQueue(client, index + 1);
     });
 }
