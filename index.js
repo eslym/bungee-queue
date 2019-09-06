@@ -21,7 +21,7 @@ for(let plugin of fs.readdirSync(pluginPath, 'utf-8')){
     require(path.join(pluginPath, plugin))(server, Handler, settings);
 }
 
-Handler.on('bungeecord:PlayerCount', function (data) {
+Handler.on('bungeecord:PlayerCount', function (next, data) {
     if (
         data.server === settings.targetServer &&
         data.count < settings.maxPlayers
