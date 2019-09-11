@@ -20,6 +20,18 @@ function Chain(callback = null) {
         return this;
     };
 
+    this.pipeOnce = function (callback){
+        this.pipe(function (next, ...args){
+            if(callback !== null){
+                let result = callback(next, ...args);
+                callback = null;
+                return result;
+            } else {
+                return next();
+            }
+        })
+    };
+
     this.clone = function () {
         return new Chain(callbacks);
     }

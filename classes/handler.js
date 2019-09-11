@@ -19,6 +19,18 @@ function Handler(client){
         return this;
     };
 
+    this.once = function(event, handler){
+        if(handlers.hasOwnProperty(event)){
+            handlers[event].pipeOnce(handler);
+        } else {
+            handlers[event] = new Chain(handler);
+            client.on(event, function(...args){
+                handlers[event].run(instance, ...args);
+            })
+        }
+        return this;
+    }
+
     for(let event in globalHandlers){
         handlers[event] = globalHandlers[event].clone();
         client.on(event, function(...args){
