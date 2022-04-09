@@ -12,7 +12,7 @@
   "dependencies": {
     "bungeecord-message": "^1.0.3",
     "minecraft-protocol": "^1.9.4",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "protodef": "^1.6.10"
   }
 }
